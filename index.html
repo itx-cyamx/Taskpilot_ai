@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaskPilot AI | Smart Customer Support</title>
+<meta name="description" content="AI-powered customer support reply assistant for growing online businesses.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+font-family:Inter,Arial,sans-serif;
+background:#080b14;color:#f5f6ff;
+min-height:100vh;
+}
+header{
+display:flex;justify-content:space-between;
+align-items:center;padding:22px 7%;
+border-bottom:1px solid #202538;
+}
+.logo{font-size:23px;font-weight:800;color:#fff}
+.logo span{color:#8b7cff}
+nav a{color:#aeb4c8;text-decoration:none;margin-left:20px;font-size:14px}
+.hero{text-align:center;padding:75px 20px 45px}
+.tag{
+display:inline-block;padding:8px 14px;
+border:1px solid #39315f;border-radius:30px;
+color:#b8adff;font-size:12px;margin-bottom:22px;
+}
+h1{font-size:clamp(34px,7vw,58px);line-height:1.12}
+h1 span{color:#9485ff}
+.hero p{color:#9da5ba;max-width:600px;margin:18px auto;line-height:1.7}
+.container{max-width:850px;margin:0 auto;padding:15px 18px 70px}
+.panel{
+background:#111727;border:1px solid #293149;
+border-radius:18px;padding:25px;margin-bottom:20px;
+box-shadow:0 15px 50px #0005;
+}
+.panel h2{font-size:20px;margin-bottom:8px}
+.sub{color:#929bb1;font-size:13px;margin-bottom:22px;line-height:1.6}
+label{display:block;font-size:13px;color:#d8dcef;margin:17px 0 8px}
+input,textarea,select{
+width:100%;padding:14px;
+background:#090f1d;border:1px solid #303a53;
+border-radius:10px;color:white;font-size:14px;
+outline:none;
+}
+input:focus,textarea:focus,select:focus{border-color:#9182ff}
+textarea{min-height:100px;resize:vertical;line-height:1.5}
+button{
+width:100%;padding:15px;border:0;border-radius:10px;
+background:linear-gradient(100deg,#7564f5,#a06cff);
+color:white;font-weight:700;font-size:15px;
+margin-top:22px;cursor:pointer;
+}
+button:disabled{opacity:.6;cursor:wait}
+.output{
+display:none;background:#0a1020;border:1px solid #333c59;
+padding:18px;border-radius:12px;margin-top:22px;
+}
+.output p{white-space:pre-wrap;line-height:1.7;color:#e2e5f2}
+.copy{background:#29314b;margin-top:14px}
+footer{text-align:center;color:#737d96;padding:25px;font-size:12px}
+.small{font-size:12px;color:#7f89a3;margin-top:12px;line-height:1.6}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">TaskPilot<span> AI</span></div>
+<nav><a href="#tool">AI Tool</a><a href="#about">About</a></nav>
+</header>
+
+<section class="hero">
+<div class="tag">✦ AI CUSTOMER SUPPORT ASSISTANT</div>
+<h1>Customer support,<br><span>made smarter.</span></h1>
+<p>Turn customer questions into professional replies in seconds. Built for modern online businesses.</p>
+</section>
+
+<main class="container" id="tool">
+<section class="panel">
+<h2>Generate your AI reply</h2>
+<p class="sub">Enter your business details and the customer's message. TaskPilot AI will draft a reply for you.</p>
+
+<label for="business">Business name</label>
+<input id="business" placeholder="Example: Urban Fashion Store">
+
+<label for="policy">Business policies / FAQs</label>
+<textarea id="policy" placeholder="Example: We offer 7-day returns. Delivery takes 3-5 days. Orders above $50 get free shipping."></textarea>
+
+<label for="question">Customer's question</label>
+<textarea id="question" placeholder="Example: Where is my order? I ordered 5 days ago."></textarea>
+
+<label for="tone">Choose reply tone</label>
+<select id="tone">
+<option value="Friendly and helpful">Friendly</option>
+<option value="Professional and polite">Professional</option>
+<option value="Short and direct">Short & Direct</option>
+<option value="Warm and apologetic">Apologetic</option>
+</select>
+
+<button id="generate" onclick="generateReply()">✦ Generate AI Reply</button>
+
+<div class="output" id="output">
+<h3 style="margin-bottom:12px">Your AI-generated reply</h3>
+<p id="answer"></p>
+<button class="copy" onclick="copyReply()">Copy Reply</button>
+</div>
+<p class="small">Always review AI-generated replies before sending them to customers.</p>
+</section>
+
+<section class="panel" id="about">
+<h2>Why TaskPilot AI?</h2>
+<p class="sub">Save time on repetitive customer questions, maintain a consistent brand voice and help your support team respond faster.</p>
+<p style="line-height:1.9;color:#b6bfd3;font-size:14px">
+✦ Fast reply drafts<br>
+✦ Business-policy based responses<br>
+✦ Multiple writing tones<br>
+✦ Simple and easy to use
+</p>
+</section>
+</main>
+
+<footer>© 2026 TaskPilot AI · Built for smarter customer support</footer>
+
+<script>
+async function generateReply(){
+const business=document.getElementById("business").value.trim();
+const policy=document.getElementById("policy").value.trim();
+const question=document.getElementById("question").value.trim();
+const tone=document.getElementById("tone").value;
+const button=document.getElementById("generate");
+const output=document.getElementById("output");
+const answer=document.getElementById("answer");
+
+if(!business||!policy||!question){
+alert("Please fill in all three fields.");
+return;
+}
+
+button.disabled=true;
+button.textContent="Generating reply...";
+output.style.display="none";
+
+try{
+const response=await fetch("/api/generate",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+businessName:business,
+policies:policy,
+customerQuestion:question,
+tone:tone
+})
+});
+
+const data=await response.json();
+
+if(!response.ok){
+throw new Error(data.error||"Could not generate reply. Please try again.");
+}
+
+const reply=data.reply||data.text;
+if(!reply) throw new Error("No reply was returned. Please try again.");
+
+answer.textContent=reply;
+output.style.display="block";
+}catch(error){
+alert(error.message||"Something went wrong. Please try again.");
+}finally{
+button.disabled=false;
+button.textContent="✦ Generate AI Reply";
+}
+}
+
+async function copyReply(){
+const text=document.getElementById("answer").textContent;
+try{
+await navigator.clipboard.writeText(text);
+alert("Reply copied!");
+}catch(e){
+alert("Please select and copy the reply manually.");
+}
+}
+</script>
+</body>
+</html>
